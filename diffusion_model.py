@@ -10,7 +10,7 @@ from forward_diffusion import Forward_Diffuser
 from reverse_diffusion import Reverse_Diffuser
 import torch
 from torch import nn
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import minmax_scale
 
 NUM_LAYERS = 3
 
@@ -30,18 +30,28 @@ class Diffuser(nn.Module):
         return encoded, decoded
 
     def fit(self, X : torch.Tensor):
-        pass
+        #set up dataloader
+
+        #for e in epochs
+        #for batch in X
+        for i in range(NUM_LAYERS):
+            encoded = self.forward_layers[i](X)
+            self.reverse_layers[i].fit(encoded, X)
+            X = encoded
 
 #Testing
 if __name__ == '__main__':
     batch = [
         [1, 2, 1, 2, 1, 2],
         [1, 3, 1, 3, 1, 2],
-        [0, 2, 0, 2, 1, 1],
+        [0, 2, 0, 0, 1, 1],
     ]
-    scaler = MinMaxScaler(feature_range=(0,1))
-    batch = scaler.fit_transform(batch)
+    batch = minmax_scale(batch, feature_range=(0,1), axis=-1)
     batch = torch.Tensor(batch)
+    print(batch)
 
     d = Diffuser(batch[0])
     print(d(batch))
+    d.fit(batch)
+    print(d(batch))
+    
