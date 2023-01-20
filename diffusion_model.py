@@ -11,6 +11,7 @@ from reverse_diffusion import Reverse_Diffuser
 import torch
 from torch import nn
 from sklearn.preprocessing import minmax_scale
+from matplotlib import pyplot as plt
 
 NUM_LAYERS = 3
 
@@ -49,6 +50,17 @@ if __name__ == '__main__':
     batch = minmax_scale(batch, feature_range=(0,1), axis=-1)
     batch = torch.Tensor(batch)
     print(batch)
+
+    # f = Forward_Diffuser()
+    # enc = batch
+    # plt.figure()
+    # color = ['green', 'blue', 'red']
+    # for _ in range(3):  
+    #     enc = f(enc)
+    #     for i, sig in enumerate(enc):
+    #         print(sig.shape)
+    #         plt.plot(range(len(sig)), sig, c=color[i])
+    # plt.show()
 
     d = Diffuser(batch[0])
     print(d(batch))
