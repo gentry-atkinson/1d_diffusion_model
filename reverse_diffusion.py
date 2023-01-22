@@ -8,7 +8,7 @@
 
 import torch
 from torch import nn
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import minmax_scale
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 LR = 0.001
@@ -20,13 +20,13 @@ class Reverse_Diffuser(nn.Module):
         self.output_shape = (X0.shape)
         self.model = nn.Sequential(
             nn.LazyConv1d(out_channels=3, kernel_size=3),
-            nn.ReLU(),
             nn.MaxPool1d(2),
+            nn.ReLU(),
             nn.LazyLinear(out_features=6),
             nn.Sigmoid()
         )
         self.model = self.model.to(device)
-        self.criterion = nn.CrossEntropyLoss()
+        self.criterion = nn.MSELoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=LR, momentum=MOMENTUM)
 
     def forward(self, batch : torch.Tensor):
@@ -51,8 +51,7 @@ if __name__ == '__main__':
         [1, 3, 1, 3, 1, 2],
         [0, 2, 0, 2, 1, 1],
     ]
-    scaler = MinMaxScaler(feature_range=(0,1))
-    batch = scaler.fit_transform(batch)
+    batch = minmax_scale(batch, feature_range=(0,1), axis=-1)
     batch = torch.Tensor(batch)
     
     f = Reverse_Diffuser(batch[0])

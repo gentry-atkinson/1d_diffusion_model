@@ -14,31 +14,33 @@ from sklearn.preprocessing import minmax_scale
 from matplotlib import pyplot as plt
 
 NUM_LAYERS = 3
+EPOCHS = 10
 
 class Diffuser(nn.Module):
     def __init__(self, X0 : torch.Tensor) -> None:
         super().__init__()
-        self.forward_layers = [Forward_Diffuser() for _ in range(NUM_LAYERS)]
-        self.reverse_layers = [Reverse_Diffuser(X0) for _ in range(NUM_LAYERS)]
+        self.forward_layers = Forward_Diffuser()
+        self.reverse_layers = Reverse_Diffuser(X0)
 
     def forward(self, X):
         encoded = X
-        for f in self.forward_layers:
-            encoded = f(encoded)
+        for _ in range(NUM_LAYERS):
+            encoded = self.forward_layers(encoded)
         decoded = encoded
-        for r in self.reverse_layers[::-1]:
-            decoded = r(decoded)
+        for _ in range(NUM_LAYERS):
+            decoded = self.reverse_layers(decoded)
         return encoded, decoded
 
     def fit(self, X : torch.Tensor):
         #set up dataloader
 
         #for e in epochs
-        #for batch in X
-        for i in range(NUM_LAYERS):
-            encoded = self.forward_layers[i](X)
-            self.reverse_layers[i].fit(encoded, X)
-            X = encoded
+        for _ in range(EPOCHS):
+            #for batch in X
+            for i in range(NUM_LAYERS):
+                encoded = self.forward_layers(X)
+                self.reverse_layers.fit(encoded, X)
+                X = encoded
 
 #Testing
 if __name__ == '__main__':
