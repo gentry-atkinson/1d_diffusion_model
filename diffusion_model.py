@@ -53,16 +53,16 @@ if __name__ == '__main__':
     batch = torch.Tensor(batch)
     print(batch)
 
-    # f = Forward_Diffuser()
-    # enc = batch
-    # plt.figure()
-    # color = ['green', 'blue', 'red']
-    # for _ in range(3):  
-    #     enc = f(enc)
-    #     for i, sig in enumerate(enc):
-    #         print(sig.shape)
-    #         plt.plot(range(len(sig)), sig, c=color[i])
-    # plt.show()
+    f = Forward_Diffuser()
+    enc = batch
+    plt.figure()
+    color = ['green', 'blue', 'red']
+    for _ in range(3):  
+        enc = f(enc)
+        for i, sig in enumerate(enc):
+            print(sig.shape)
+            plt.plot(range(len(sig)), sig, c=color[i])
+    plt.show()
 
     d = Diffuser(batch[0])
     print(d(batch))
